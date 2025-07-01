@@ -1,15 +1,18 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.types import ChatJoinRequest
-from aiogram.utils import executor
 import logging
+import asyncio
+import os
+from aiogram import Bot, Dispatcher, F
+from aiogram.enums import ParseMode
+from aiogram.types import ChatJoinRequest
 
-API_TOKEN = '7520497210:AAER0NF8rP-cWcfGUuUzkM90Xr-I8JsZRuw'  # Replace if token changes
+# Load token securely from environment variable (recommended)
+API_TOKEN = os.getenv("BOT_TOKEN")
 
-logging.basicConfig(level=logging.INFO)
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
+# Bot and dispatcher setup
+bot = Bot(token=API_TOKEN, parse_mode=ParseMode.HTML)
+dp = Dispatcher()
 
-@dp.chat_join_request_handler()
+@dp.chat_join_request()
 async def approve_and_send_custom_message(join_request: ChatJoinRequest):
     try:
         await join_request.approve()
@@ -30,12 +33,15 @@ async def approve_and_send_custom_message(join_request: ChatJoinRequest):
                 "🔹 https://wa.link/playbuzz_official\n"
                 "🔹 https://wa.link/playbuzz_official\n\n"
                 "📞 <b>Customer Care</b> - https://wa.link/playbuzzcare"
-            ),
-            parse_mode="HTML"
+            )
         )
-        print(f"Approved: {join_request.from_user.full_name}")
+        print(f"✅ Approved: {join_request.from_user.full_name}")
     except Exception as e:
         print(f"❌ Error: {e}")
 
-if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+async def main():
+    logging.basicConfig(level=logging.INFO)
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())
