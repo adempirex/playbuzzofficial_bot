@@ -5,8 +5,12 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ParseMode
 from aiogram.types import ChatJoinRequest
 
-# Load token securely from environment variable (recommended)
+# Load token securely from environment variable
 API_TOKEN = os.getenv("BOT_TOKEN")
+
+# 🔐 Token check (important!)
+if not API_TOKEN:
+    raise ValueError("❌ BOT_TOKEN is missing! Make sure it is set in Railway environment variables.")
 
 # Bot and dispatcher setup
 bot = Bot(token=API_TOKEN, parse_mode=ParseMode.HTML)
